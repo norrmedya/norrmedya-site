@@ -42,16 +42,21 @@
   @media (prefers-reduced-motion:reduce){.skyline .w{animation:none;opacity:.9}}
 
   /* Sihirbaz */
-  main{max-width:880px;margin:0 auto;padding:0 clamp(20px,5vw,40px)}
-  .steps{display:flex;gap:8px;margin:56px 0 40px;list-style:none;counter-reset:s}
-  .steps li{flex:1;border-top:3px solid var(--ufuk);padding-top:10px;font-size:14px;color:var(--sis)}
-  .steps li b{font-family:var(--display);font-size:20px;font-weight:700;margin-right:6px;color:var(--ufuk)}
-  .steps li.on{border-color:var(--pencere);color:var(--kirec)}
-  .steps li.on b{color:var(--pencere)}
-  .steps li.done{border-color:var(--sis)}
-
-  section.step{display:none}
-  section.step.on{display:block}
+  main{max-width:1180px;margin:0 auto;padding:56px clamp(20px,5vw,40px) 0;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:56px;align-items:start}
+  .block{margin-bottom:48px}
+  .block h2 small{font-family:var(--body);font-size:15px;font-weight:500;color:var(--sis);margin-left:10px;letter-spacing:0}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips .opt label{padding:10px 16px;border-radius:999px}
+  .receipt{position:sticky;top:24px;background:var(--gece-2);border:1.5px solid var(--ufuk);border-radius:14px;padding:24px}
+  .receipt h3{font-family:var(--display);font-weight:700;font-size:28px;line-height:1;margin-bottom:4px}
+  .receipt .ctx{color:var(--sis);font-size:14px;margin-bottom:16px}
+  .receipt .empty{color:var(--sis);font-size:15px;padding:18px 0;border-top:1px solid var(--ufuk)}
+  .receipt .big{font-size:clamp(48px,6vw,64px);margin:22px 0 4px}
+  .receipt .wa{width:100%;justify-content:center;margin-top:20px}
+  .receipt .wa[aria-disabled="true"]{opacity:.35;pointer-events:none}
+  .receipt .fine{margin-top:16px;font-size:13px}
+  @media (max-width:900px){main{grid-template-columns:1fr;gap:8px}.receipt{position:static}}
+  @media (min-width:901px){.total{display:none !important}}
   h2{font-family:var(--display);font-weight:700;font-size:clamp(34px,5vw,48px);line-height:1;margin-bottom:8px}
   .lead{color:var(--sis);margin-bottom:32px;max-width:56ch}
   fieldset{border:0;margin-bottom:36px}
@@ -86,7 +91,7 @@
 
   /* Özet */
   .summary{list-style:none;border-top:1px solid var(--ufuk)}
-  .summary li{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--ufuk);font-size:16px}
+  .summary li{font-size:15px;display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--ufuk)}
   .summary li span:last-child{white-space:nowrap;color:var(--sis)}
   .summary li.minus span:last-child{color:var(--pencere)}
   .big{font-family:var(--display);font-weight:800;font-size:clamp(64px,13vw,128px);line-height:.9;margin:36px 0 6px}
@@ -101,12 +106,12 @@
   .total .num{font-family:var(--display);font-weight:800;font-size:clamp(32px,5vw,44px);line-height:1}
   .total .num small{font-size:.45em;color:var(--sis);font-weight:700}
   .total.hide{display:none}
+  .total a{color:var(--pencere);font-weight:600;font-size:15px}
 
   footer{max-width:880px;margin:96px auto 0;padding:32px clamp(20px,5vw,40px);border-top:1px solid var(--ufuk);color:var(--sis);font-size:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
 
   @media (max-width:600px){
     .bar nav a:not(.cta){display:none}
-    .steps li span{display:none}
     .sub .opts{grid-template-columns:1fr 1fr}
   }
 </style>
@@ -138,83 +143,50 @@
 </div>
 
 <main id="hesapla">
-  <ol class="steps" aria-label="Adımlar">
-    <li class="on"><b>1</b><span>Mülk</span></li>
-    <li><b>2</b><span>Hizmetler</span></li>
-    <li><b>3</b><span>Ekstralar</span></li>
-    <li><b>4</b><span>Fiyat</span></li>
-  </ol>
+  <div>
+    <section class="block">
+      <h2>Mülk</h2>
+      <p class="lead">Fiyatlar mülkün tipine ve büyüklüğüne göre güncellenir.</p>
+      <fieldset><legend>Tip</legend><div class="chips" id="tip"></div></fieldset>
+      <fieldset><legend>Büyüklük</legend><div class="chips" id="m2"></div></fieldset>
+      <fieldset style="margin-bottom:0">
+        <legend><label for="ilce">İlçe</label></legend>
+        <select id="ilce"><option value="">İlçe seçin</option></select>
+        <p class="hint" id="ilceHint"></p>
+      </fieldset>
+    </section>
 
-  <!-- 1. Mülk -->
-  <section class="step on" data-step="1">
-    <h2>Mülkü tanıyalım</h2>
-    <p class="lead">Fiyat mülkün tipine, büyüklüğüne ve konumuna göre değişiyor.</p>
-
-    <fieldset>
-      <legend>Mülk tipi</legend>
-      <div class="opts" id="tip"></div>
-    </fieldset>
-
-    <fieldset>
-      <legend>Büyüklük</legend>
-      <div class="opts" id="m2"></div>
-    </fieldset>
-
-    <fieldset>
-      <legend><label for="ilce">İlçe</label></legend>
-      <select id="ilce"><option value="">İlçe seçin</option></select>
-      <p class="hint" id="ilceHint"></p>
-    </fieldset>
-
-    <div class="nav"><span></span><button class="go" data-next>Hizmetlere geç</button></div>
-    <p class="err" role="alert"></p>
-  </section>
-
-  <!-- 2. Hizmetler -->
-  <section class="step" data-step="2">
-    <h2>Ne çekelim?</h2>
-    <p class="lead">Birden fazla hizmet seçebilirsiniz. İki hizmette %10, üç ve üzerinde %15 paket indirimi uygulanır.</p>
-
-    <fieldset>
-      <legend>Hizmetler</legend>
+    <section class="block">
+      <h2>Hizmetler <small>istediğinizi seçin</small></h2>
+      <p class="lead">Tek bir hizmet de seçebilirsiniz. İki hizmette %10, üç ve üzerinde %15 indirim otomatik uygulanır.</p>
       <div class="opts wide" id="hizmet"></div>
       <div class="sub" id="fotoSub">
         <p class="hint" style="margin:0 0 10px">Fotoğraf türü</p>
         <div class="opts" id="fotoTur"></div>
       </div>
-    </fieldset>
+    </section>
 
-    <div class="nav"><button data-prev>Geri</button><button class="go" data-next>Ekstralara geç</button></div>
-    <p class="err" role="alert"></p>
-  </section>
-
-  <!-- 3. Ekstralar -->
-  <section class="step" data-step="3">
-    <h2>Ekstralar</h2>
-    <p class="lead">İsteğe bağlı. Seçmeden de devam edebilirsiniz.</p>
-    <fieldset>
-      <legend>Ekstralar</legend>
+    <section class="block">
+      <h2>Ekstralar <small>isteğe bağlı</small></h2>
       <div class="opts wide" id="ekstra"></div>
-    </fieldset>
-    <div class="nav"><button data-prev>Geri</button><button class="go" data-next>Fiyatı gör</button></div>
-  </section>
+    </section>
+  </div>
 
-  <!-- 4. Fiyat -->
-  <section class="step" data-step="4">
-    <h2>Fiyatınız</h2>
-    <p class="lead" id="ozetLead"></p>
+  <aside class="receipt" id="fis" aria-live="polite">
+    <h3>Fiyatınız</h3>
+    <p class="ctx" id="ozetLead"></p>
+    <p class="empty" id="bos">Hizmet seçtiğinizde fiyat burada görünür.</p>
     <ul class="summary" id="ozet"></ul>
     <p class="big" id="big"></p>
     <p class="kdv" id="kdv"></p>
-    <a class="wa" id="wa" href="#" target="_blank" rel="noopener">WhatsApp'tan teklif al</a>
-    <p class="fine">Fiyatlar 1 Ocak 2027'den itibaren geçerlidir ve KDV hariçtir. Kesin fiyat, mülkü gördükten sonra WhatsApp üzerinden onaylanır. Çekim tarihi hava durumuna göre planlanır.</p>
-    <div class="nav" style="margin-top:32px"><button data-prev>Seçimleri değiştir</button><span></span></div>
-  </section>
+    <a class="wa" id="wa" href="#" target="_blank" rel="noopener" aria-disabled="true">WhatsApp'tan teklif al</a>
+    <p class="fine">Fiyatlar 1 Ocak 2027'den itibaren geçerlidir ve KDV hariçtir. Kesin fiyat, mülkü gördükten sonra WhatsApp üzerinden onaylanır.</p>
+  </aside>
 </main>
 
-<div class="total hide" id="total" aria-live="polite">
-  <div><div class="lbl">Tahmini toplam</div><div class="num" id="totalNum">0 ₺</div></div>
-  <div class="lbl">+ KDV</div>
+<div class="total hide" id="total">
+  <div><div class="lbl">Toplam (+ KDV)</div><div class="num" id="totalNum">0 ₺</div></div>
+  <a href="#fis">Detay ve teklif</a>
 </div>
 
 <footer>
@@ -279,11 +251,12 @@ function kart(container, type, name, item, extra=""){
 }
 AYAR.tipler.forEach(t => kart($("#tip"), "radio", "tip", t));
 AYAR.m2.forEach(m => kart($("#m2"), "radio", "m2", m));
-AYAR.hizmetler.forEach(h => kart($("#hizmet"), "checkbox", "hizmet", h,
-  `<span class="p">${h.fiyat ? tl(h.fiyat) : AYAR.fotoTurleri.map(f=>tl(f.fiyat)).join(" / ")}</span>`));
-AYAR.fotoTurleri.forEach(f => kart($("#fotoTur"), "radio", "fotoTur", f, `<span class="p">${tl(f.fiyat)}</span>`));
+AYAR.hizmetler.forEach(h => kart($("#hizmet"), "checkbox", "hizmet", h, `<span class="p" data-fiyat="${h.id}"></span>`));
+AYAR.fotoTurleri.forEach(f => kart($("#fotoTur"), "radio", "fotoTur", f, `<span class="p" data-foto="${f.id}"></span>`));
 AYAR.ekstralar.forEach(e => kart($("#ekstra"), "checkbox", "ekstra", e,
   `<span class="p">${e.sabit ? "+" + tl(e.sabit) : "+%" + Math.round(e.oran*100)}</span>`));
+document.getElementById("tip-daire").checked = true;
+document.getElementById("m2-a").checked = true;
 document.getElementById("fotoTur-hdr").checked = true;
 
 const ilceler = Object.entries(AYAR.bolgeler).flatMap(([k,b]) => b.ilceler.map(i => ({ad:i, bolge:k})))
@@ -296,101 +269,77 @@ function secim(){
   const [bolge, ilce] = ($("#ilce").value || "|").split("|");
   return {tip:val("tip"), m2:val("m2"), bolge, ilce, hizmet:all("hizmet"), fotoTur:val("fotoTur"), ekstra:all("ekstra")};
 }
+const carpanOf = s => { const m = AYAR.m2.find(x => x.id === s.m2); return m.carpan === null ? null : AYAR.tipler.find(t => t.id === s.tip).carpan * m.carpan; };
+function hizmetFiyat(id, s){
+  const h = AYAR.hizmetler.find(x => x.id === id);
+  const f = id === "foto" ? AYAR.fotoTurleri.find(x => x.id === s.fotoTur) : null;
+  return {ad: h.ad + (f ? " (" + f.ad + ")" : ""), taban: f ? f.fiyat : h.fiyat};
+}
 
 function hesapla(s){
-  const tip = AYAR.tipler.find(t => t.id === s.tip);
-  const m2 = AYAR.m2.find(m => m.id === s.m2);
-  const satirlar = [];
-  if (!tip || !m2 || !s.hizmet.length) return null;
-  if (m2.carpan === null) return {ozel:true, satirlar};
-  const carpan = tip.carpan * m2.carpan;
-  let ara = 0;
-  s.hizmet.forEach(id => {
-    const h = AYAR.hizmetler.find(x => x.id === id);
-    let fiyat = h.fiyat, ad = h.ad;
-    if (id === "foto"){ const f = AYAR.fotoTurleri.find(x => x.id === s.fotoTur); fiyat = f.fiyat; ad += " (" + f.ad + ")"; }
-    const tutar = fiyat * carpan; ara += tutar;
-    satirlar.push([ad, tutar]);
-  });
+  const carpan = carpanOf(s);
+  if (!s.hizmet.length) return null;
+  if (carpan === null) return {ozel:true, satirlar:[]};
+  const satirlar = []; let ara = 0;
+  s.hizmet.forEach(id => { const {ad, taban} = hizmetFiyat(id, s); const t = yuvarla(taban * carpan); ara += t; satirlar.push([ad, t]); });
   const n = s.hizmet.length;
   const oran = n >= 3 ? AYAR.paketIndirimi[3] : (AYAR.paketIndirimi[n] || 0);
-  if (oran){ const ind = ara * oran; ara -= ind; satirlar.push([`Paket indirimi (%${oran*100})`, -ind]); }
+  if (oran){ const ind = yuvarla(ara * oran); ara -= ind; satirlar.push([`Paket indirimi (%${oran*100})`, -ind]); }
   const videoVar = s.hizmet.some(id => AYAR.hizmetler.find(x => x.id === id).video);
   AYAR.ekstralar.filter(e => e.sabit && s.ekstra.includes(e.id) && (!e.videoGerekir || videoVar))
     .forEach(e => { ara += e.sabit; satirlar.push([e.ad, e.sabit]); });
   const hizli = AYAR.ekstralar.find(e => e.oran && s.ekstra.includes(e.id));
-  if (hizli){ const ek = ara * hizli.oran; ara += ek; satirlar.push([hizli.ad, ek]); }
+  if (hizli){ const ek = yuvarla(ara * hizli.oran); ara += ek; satirlar.push([hizli.ad, ek]); }
   const b = AYAR.bolgeler[s.bolge];
   if (b && b.ucret){ ara += b.ucret; satirlar.push([`Ulaşım (${b.ad.toLowerCase()})`, b.ucret]); }
-  return {toplam:yuvarla(ara), satirlar};
+  return {toplam: yuvarla(ara), satirlar};
 }
 
 function guncelle(){
-  const s = secim();
-  // ilçe ipucu
+  const s = secim(), carpan = carpanOf(s);
+  // kartlardaki fiyatlar bu mülke göre
+  document.querySelectorAll("[data-fiyat]").forEach(el => {
+    const id = el.dataset.fiyat;
+    if (carpan === null){ el.textContent = "Özel teklif"; return; }
+    el.textContent = id === "foto"
+      ? AYAR.fotoTurleri.map(f => tl(yuvarla(f.fiyat * carpan))).join(" / ")
+      : tl(yuvarla(AYAR.hizmetler.find(h => h.id === id).fiyat * carpan));
+  });
+  document.querySelectorAll("[data-foto]").forEach(el => {
+    el.textContent = carpan === null ? "Özel teklif" : tl(yuvarla(AYAR.fotoTurleri.find(f => f.id === el.dataset.foto).fiyat * carpan));
+  });
   const b = AYAR.bolgeler[s.bolge];
-  $("#ilceHint").innerHTML = b ? (b.ucret ? `${b.ad}: ulaşım için <strong>+${tl(b.ucret)}</strong>` : "Merkez bölge: ek ulaşım ücreti yok") : "";
-  // foto alt seçimi
+  $("#ilceHint").innerHTML = b ? (b.ucret ? `${b.ad}: ulaşım için <strong>+${tl(b.ucret)}</strong>` : "Ek ulaşım ücreti yok") : "";
   $("#fotoSub").classList.toggle("on", s.hizmet.includes("foto"));
-  // seslendirme yalnız video ile
   const videoVar = s.hizmet.some(id => AYAR.hizmetler.find(x => x.id === id).video);
-  const ses = document.getElementById("ekstra-ses");
-  ses.disabled = !videoVar; if (!videoVar) ses.checked = false;
-  // canlı toplam
-  const r = hesapla(s);
-  const bar = $("#total");
-  bar.classList.toggle("hide", !r || adim === 4);
-  if (r) $("#totalNum").textContent = r.ozel ? "Özel teklif" : tl(r.toplam);
-}
+  const ses = document.getElementById("ekstra-ses"); ses.disabled = !videoVar; if (!videoVar) ses.checked = false;
 
-let adim = 1;
-function git(n){
-  adim = n;
-  document.querySelectorAll("section.step").forEach(s => s.classList.toggle("on", +s.dataset.step === n));
-  document.querySelectorAll(".steps li").forEach((li,i) => { li.classList.toggle("on", i+1 === n); li.classList.toggle("done", i+1 < n); });
-  if (n === 4) sonuc();
-  guncelle();
-  $("#hesapla").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
-}
-function dogrula(n){
-  const s = secim();
-  if (n === 1){
-    if (!s.tip) return "Mülk tipini seçin.";
-    if (!s.m2) return "Büyüklüğü seçin.";
-    if (!s.ilce) return "İlçeyi seçin.";
-  }
-  if (n === 2 && !s.hizmet.length) return "En az bir hizmet seçin.";
-  return "";
-}
-document.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => {
-  const sec = b.closest("section"); const err = dogrula(adim);
-  const box = sec.querySelector(".err"); if (box) box.textContent = err;
-  if (!err) git(adim + 1);
-}));
-document.querySelectorAll("[data-prev]").forEach(b => b.addEventListener("click", () => git(adim === 4 ? 2 : adim - 1)));
-document.addEventListener("change", e => { const box = e.target.closest("section")?.querySelector(".err"); if (box) box.textContent = ""; guncelle(); });
-
-function sonuc(){
-  const s = secim(), r = hesapla(s);
+  // fiş
   const tip = AYAR.tipler.find(t => t.id === s.tip), m2 = AYAR.m2.find(m => m.id === s.m2);
-  $("#ozetLead").textContent = `${s.ilce} · ${tip.ad} · ${m2.ad}`;
-  const ul = $("#ozet"); ul.innerHTML = "";
-  let mesaj = `Merhaba Norr Medya, gayrimenkul çekimi için teklif almak istiyorum.\n\nMülk: ${tip.ad}, ${m2.ad}\nİlçe: ${s.ilce}\n`;
+  $("#ozetLead").textContent = [s.ilce, tip.ad, m2.ad].filter(Boolean).join(" · ");
+  const r = hesapla(s), ul = $("#ozet"); ul.innerHTML = "";
+  $("#bos").style.display = r ? "none" : "block";
+  $("#wa").setAttribute("aria-disabled", r ? "false" : "true");
+  $("#total").classList.toggle("hide", !r);
+  if (!r){ $("#big").innerHTML = ""; $("#kdv").textContent = ""; return; }
+  let mesaj = `Merhaba Norr Medya, gayrimenkul çekimi için teklif almak istiyorum.\n\nMülk: ${tip.ad}, ${m2.ad}\nİlçe: ${s.ilce || "belirtilmedi"}\n`;
   if (r.ozel){
-    $("#big").innerHTML = "Özel teklif";
-    $("#kdv").textContent = "800 m² üstü mülkler için fiyatı keşif sonrası birlikte belirliyoruz.";
-    const hz = s.hizmet.map(id => AYAR.hizmetler.find(x => x.id === id).ad).join(", ");
-    mesaj += `Hizmetler: ${hz}\n`;
+    $("#big").textContent = "Özel teklif";
+    $("#kdv").textContent = "800 m² üstü mülklerde fiyatı keşif sonrası belirliyoruz.";
+    $("#totalNum").textContent = "Özel teklif";
+    mesaj += "Hizmetler: " + s.hizmet.map(id => hizmetFiyat(id, s).ad).join(", ");
   } else {
     r.satirlar.forEach(([ad, t]) => ul.insertAdjacentHTML("beforeend",
-      `<li class="${t<0?"minus":""}"><span>${ad}</span><span>${t<0?"−":""}${tl(yuvarla(Math.abs(t)))}</span></li>`));
+      `<li class="${t<0?"minus":""}"><span>${ad}</span><span>${t<0?"−":""}${tl(Math.abs(t))}</span></li>`));
     $("#big").innerHTML = `${tl(r.toplam)}<small>+ KDV</small>`;
     $("#kdv").textContent = `KDV dahil ${tl(Math.round(r.toplam * (1 + AYAR.kdv)))}`;
-    mesaj += r.satirlar.map(([ad,t]) => `• ${ad}: ${t<0?"−":""}${tl(yuvarla(Math.abs(t)))}`).join("\n");
-    mesaj += `\n\nTahmini toplam: ${tl(r.toplam)} + KDV`;
+    $("#totalNum").textContent = tl(r.toplam);
+    mesaj += r.satirlar.map(([ad,t]) => `• ${ad}: ${t<0?"−":""}${tl(Math.abs(t))}`).join("\n") + `\n\nToplam: ${tl(r.toplam)} + KDV`;
   }
   $("#wa").href = `https://wa.me/${AYAR.whatsapp}?text=${encodeURIComponent(mesaj)}`;
 }
+document.addEventListener("change", guncelle);
+guncelle();
 
 /* Gökyüzündeki pencereler: siluetin üstünde tek seferlik yanma */
 (function(){
