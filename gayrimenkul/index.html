@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gayrimenkul Çekimi Fiyat Hesapla | Norr Medya</title>
+<meta name="description" content="İstanbul'da gayrimenkul fotoğraf, video, drone ve Reels çekimi. Mülkünüzü seçin, fiyatı anında görün, WhatsApp'tan teklif alın.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gece:#0D1B26;      /* mavi saat gökyüzü, zemin */
+    --gece-2:#14273A;    /* kart zemini */
+    --ufuk:#2B4A63;      /* çizgiler, pasif öğeler */
+    --sis:#B9C6CF;       /* ikincil metin */
+    --kirec:#F3F5F4;     /* ana metin */
+    --pencere:#F2B75B;   /* yanan pencere ışığı, tek vurgu */
+    --display:"Big Shoulders Display", "Arial Narrow", sans-serif;
+    --body:"Figtree", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--gece);color:var(--kirec);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:120px}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--pencere);outline-offset:3px;border-radius:4px}
+
+  /* Header */
+  .bar{display:flex;justify-content:space-between;align-items:center;padding:22px clamp(20px,5vw,64px);position:relative;z-index:2}
+  .wordmark{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:.04em;text-decoration:none}
+  .wordmark span{color:var(--pencere)}
+  .bar nav a{font-size:15px;color:var(--sis);text-decoration:none;margin-left:28px}
+  .bar nav a:hover{color:var(--kirec)}
+
+  /* Hero: mavi saat ufku */
+  .hero{position:relative;padding:clamp(48px,9vw,120px) clamp(20px,5vw,64px) 0;overflow:hidden}
+  .hero h1{font-family:var(--display);font-weight:800;font-size:clamp(52px,10vw,132px);line-height:.9;letter-spacing:-.01em;max-width:11ch;position:relative;z-index:1}
+  .hero p{max-width:46ch;color:var(--sis);margin-top:24px;font-size:19px;position:relative;z-index:1}
+  .skyline{display:block;width:100%;height:auto;margin-top:clamp(40px,7vw,80px)}
+  .skyline .w{fill:var(--pencere);opacity:.0;animation:yan 0.6s ease forwards}
+  @keyframes yan{to{opacity:.9}}
+  @media (prefers-reduced-motion:reduce){.skyline .w{animation:none;opacity:.9}}
+
+  /* Sihirbaz */
+  main{max-width:880px;margin:0 auto;padding:0 clamp(20px,5vw,40px)}
+  .steps{display:flex;gap:8px;margin:56px 0 40px;list-style:none;counter-reset:s}
+  .steps li{flex:1;border-top:3px solid var(--ufuk);padding-top:10px;font-size:14px;color:var(--sis)}
+  .steps li b{font-family:var(--display);font-size:20px;font-weight:700;margin-right:6px;color:var(--ufuk)}
+  .steps li.on{border-color:var(--pencere);color:var(--kirec)}
+  .steps li.on b{color:var(--pencere)}
+  .steps li.done{border-color:var(--sis)}
+
+  section.step{display:none}
+  section.step.on{display:block}
+  h2{font-family:var(--display);font-weight:700;font-size:clamp(34px,5vw,48px);line-height:1;margin-bottom:8px}
+  .lead{color:var(--sis);margin-bottom:32px;max-width:56ch}
+  fieldset{border:0;margin-bottom:36px}
+  legend{font-weight:600;font-size:17px;margin-bottom:14px}
+
+  .opts{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .opts.wide{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .opt{position:relative}
+  .opt input{position:absolute;opacity:0;inset:0;cursor:pointer}
+  .opt label{display:block;padding:16px 18px;border:1.5px solid var(--ufuk);border-radius:10px;cursor:pointer;background:var(--gece-2);transition:border-color .15s,background .15s;height:100%}
+  .opt label strong{display:block;font-weight:600}
+  .opt label small{display:block;color:var(--sis);font-size:14px;margin-top:4px}
+  .opt label .p{display:block;font-family:var(--display);font-weight:700;font-size:22px;margin-top:10px;color:var(--sis)}
+  .opt input:checked + label{border-color:var(--pencere);background:#1B3247}
+  .opt input:checked + label .p{color:var(--pencere)}
+  .opt input:focus-visible + label{outline:2px solid var(--pencere);outline-offset:3px}
+  .opt input:disabled + label{opacity:.4;cursor:not-allowed}
+
+  .sub{margin-top:10px;padding:14px 18px;border-left:3px solid var(--pencere);background:var(--gece-2);border-radius:0 10px 10px 0;display:none}
+  .sub.on{display:block}
+  .sub .opts{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+  select{width:100%;max-width:420px;padding:15px 16px;font:inherit;color:var(--kirec);background:var(--gece-2);border:1.5px solid var(--ufuk);border-radius:10px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--sis) 50%),linear-gradient(135deg,var(--sis) 50%,transparent 50%);background-position:calc(100% - 22px) 50%,calc(100% - 16px) 50%;background-size:6px 6px;background-repeat:no-repeat}
+  .hint{font-size:14px;color:var(--sis);margin-top:10px}
+  .hint strong{color:var(--pencere);font-weight:600}
+
+  .nav{display:flex;justify-content:space-between;gap:12px;margin-top:8px}
+  button{font:inherit;font-weight:600;border-radius:999px;padding:14px 28px;cursor:pointer;border:1.5px solid var(--ufuk);background:transparent;color:var(--kirec)}
+  button.go{background:var(--pencere);border-color:var(--pencere);color:var(--gece)}
+  button:disabled{opacity:.35;cursor:not-allowed}
+  .err{color:var(--pencere);font-size:15px;margin-top:12px;min-height:1.4em}
+
+  /* Özet */
+  .summary{list-style:none;border-top:1px solid var(--ufuk)}
+  .summary li{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--ufuk);font-size:16px}
+  .summary li span:last-child{white-space:nowrap;color:var(--sis)}
+  .summary li.minus span:last-child{color:var(--pencere)}
+  .big{font-family:var(--display);font-weight:800;font-size:clamp(64px,13vw,128px);line-height:.9;margin:36px 0 6px}
+  .big small{font-size:.32em;font-weight:700;color:var(--sis);margin-left:8px}
+  .kdv{color:var(--sis)}
+  .wa{display:inline-flex;align-items:center;gap:10px;margin-top:28px;background:var(--pencere);color:var(--gece);text-decoration:none;font-weight:600;padding:16px 30px;border-radius:999px;font-size:18px}
+  .fine{font-size:14px;color:var(--sis);margin-top:24px;max-width:60ch}
+
+  /* Canlı toplam şeridi */
+  .total{position:fixed;left:0;right:0;bottom:0;background:rgba(13,27,38,.94);backdrop-filter:blur(8px);border-top:1px solid var(--ufuk);padding:14px clamp(20px,5vw,64px);display:flex;justify-content:space-between;align-items:center;z-index:5}
+  .total .lbl{font-size:14px;color:var(--sis)}
+  .total .num{font-family:var(--display);font-weight:800;font-size:clamp(32px,5vw,44px);line-height:1}
+  .total .num small{font-size:.45em;color:var(--sis);font-weight:700}
+  .total.hide{display:none}
+
+  footer{max-width:880px;margin:96px auto 0;padding:32px clamp(20px,5vw,40px);border-top:1px solid var(--ufuk);color:var(--sis);font-size:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media (max-width:600px){
+    .bar nav a:not(.cta){display:none}
+    .steps li span{display:none}
+    .sub .opts{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="wordmark" href="/">NORR<span>.</span>MEDYA</a>
+  <nav>
+    <a href="#hesapla">Fiyat hesapla</a>
+    <a class="cta" href="https://wa.me/905387312651" target="_blank" rel="noopener">WhatsApp</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <h1>Mülkünüzü en iyi saatinde çekiyoruz</h1>
+  <p>İstanbul'da daire, villa, ofis ve bina için fotoğraf, tanıtım videosu, drone ve Reels. Birkaç seçim yapın, fiyatı hemen görün.</p>
+  <svg class="skyline" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0D1B26"/>
+        <stop offset="1" stop-color="#1E3A52"/>
+      </linearGradient>
+    </defs>
+    <rect width="1440" height="220" fill="url(#sky)"/>
+    <path fill="#081219" d="M0 220V150h60v-30h50v40h40V90h70v70h30v-40h60v100h20V60h18V40h14v20h18v160h40v-90h80v90h30v-60h50v-50h60v110h40v-80h20l20-30 20 30h20v80h50V100h90v120h30v-70h40v-40h80v110h20V70h30V50h20v20h30v150h40v-90h60v90h30v-50h50v50h40V110h70v110h30v-60h60v60h40v-90h50v90z"/>
+    <g id="windows"></g>
+  </svg>
+</div>
+
+<main id="hesapla">
+  <ol class="steps" aria-label="Adımlar">
+    <li class="on"><b>1</b><span>Mülk</span></li>
+    <li><b>2</b><span>Hizmetler</span></li>
+    <li><b>3</b><span>Ekstralar</span></li>
+    <li><b>4</b><span>Fiyat</span></li>
+  </ol>
+
+  <!-- 1. Mülk -->
+  <section class="step on" data-step="1">
+    <h2>Mülkü tanıyalım</h2>
+    <p class="lead">Fiyat mülkün tipine, büyüklüğüne ve konumuna göre değişiyor.</p>
+
+    <fieldset>
+      <legend>Mülk tipi</legend>
+      <div class="opts" id="tip"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Büyüklük</legend>
+      <div class="opts" id="m2"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><label for="ilce">İlçe</label></legend>
+      <select id="ilce"><option value="">İlçe seçin</option></select>
+      <p class="hint" id="ilceHint"></p>
+    </fieldset>
+
+    <div class="nav"><span></span><button class="go" data-next>Hizmetlere geç</button></div>
+    <p class="err" role="alert"></p>
+  </section>
+
+  <!-- 2. Hizmetler -->
+  <section class="step" data-step="2">
+    <h2>Ne çekelim?</h2>
+    <p class="lead">Birden fazla hizmet seçebilirsiniz. İki hizmette %10, üç ve üzerinde %15 paket indirimi uygulanır.</p>
+
+    <fieldset>
+      <legend>Hizmetler</legend>
+      <div class="opts wide" id="hizmet"></div>
+      <div class="sub" id="fotoSub">
+        <p class="hint" style="margin:0 0 10px">Fotoğraf türü</p>
+        <div class="opts" id="fotoTur"></div>
+      </div>
+    </fieldset>
+
+    <div class="nav"><button data-prev>Geri</button><button class="go" data-next>Ekstralara geç</button></div>
+    <p class="err" role="alert"></p>
+  </section>
+
+  <!-- 3. Ekstralar -->
+  <section class="step" data-step="3">
+    <h2>Ekstralar</h2>
+    <p class="lead">İsteğe bağlı. Seçmeden de devam edebilirsiniz.</p>
+    <fieldset>
+      <legend>Ekstralar</legend>
+      <div class="opts wide" id="ekstra"></div>
+    </fieldset>
+    <div class="nav"><button data-prev>Geri</button><button class="go" data-next>Fiyatı gör</button></div>
+  </section>
+
+  <!-- 4. Fiyat -->
+  <section class="step" data-step="4">
+    <h2>Fiyatınız</h2>
+    <p class="lead" id="ozetLead"></p>
+    <ul class="summary" id="ozet"></ul>
+    <p class="big" id="big"></p>
+    <p class="kdv" id="kdv"></p>
+    <a class="wa" id="wa" href="#" target="_blank" rel="noopener">WhatsApp'tan teklif al</a>
+    <p class="fine">Fiyatlar 1 Ocak 2027'den itibaren geçerlidir ve KDV hariçtir. Kesin fiyat, mülkü gördükten sonra WhatsApp üzerinden onaylanır. Çekim tarihi hava durumuna göre planlanır.</p>
+    <div class="nav" style="margin-top:32px"><button data-prev>Seçimleri değiştir</button><span></span></div>
+  </section>
+</main>
+
+<div class="total hide" id="total" aria-live="polite">
+  <div><div class="lbl">Tahmini toplam</div><div class="num" id="totalNum">0 ₺</div></div>
+  <div class="lbl">+ KDV</div>
+</div>
+
+<footer>
+  <span>© 2027 Norr Medya · İstanbul</span>
+  <a href="https://wa.me/905387312651" target="_blank" rel="noopener">0538 731 26 51</a>
+</footer>
+
+<script>
+/* ===== FİYAT AYARLARI (2027, KDV hariç) — fiyatları buradan değiştirin ===== */
+const AYAR = {
+  whatsapp: "905387312651",
+  kdv: 0.20,
+  tipler: [
+    {id:"daire",  ad:"Daire",            carpan:1.00},
+    {id:"villa",  ad:"Villa / Müstakil", carpan:1.20},
+    {id:"ofis",   ad:"Ofis / Dükkan",    carpan:1.15},
+    {id:"bina",   ad:"Bina / Yurt / Otel", carpan:1.40},
+    {id:"arsa",   ad:"Arsa",             carpan:0.80}
+  ],
+  m2: [
+    {id:"a", ad:"0–100 m²",   carpan:1.00},
+    {id:"b", ad:"100–200 m²", carpan:1.25},
+    {id:"c", ad:"200–400 m²", carpan:1.50},
+    {id:"d", ad:"400–800 m²", carpan:2.00},
+    {id:"e", ad:"800 m² üstü", carpan:null}   // null = özel teklif
+  ],
+  hizmetler: [
+    {id:"foto",   ad:"Fotoğraf çekimi",   aciklama:"İç ve dış mekan, düzenlenmiş kareler", fiyat:null},
+    {id:"video",  ad:"Tanıtım videosu",   aciklama:"Yatay, sinematik, 60–90 sn", fiyat:11000, video:true},
+    {id:"drone",  ad:"Drone çekimi",      aciklama:"Havadan fotoğraf ve kısa video", fiyat:7500},
+    {id:"reels",  ad:"Reels / dikey video", aciklama:"Instagram ve TikTok için satış videosu", fiyat:8500, video:true}
+  ],
+  fotoTurleri: [
+    {id:"normal", ad:"Normal", fiyat:5500},
+    {id:"hdr",    ad:"HDR",    fiyat:7500}
+  ],
+  ekstralar: [
+    {id:"ses",   ad:"Seslendirme", aciklama:"Profesyonel dış ses ile anlatım. Video veya Reels seçilince açılır.", sabit:3500, videoGerekir:true},
+    {id:"hizli", ad:"24 saatte teslim", aciklama:"Standart teslim 3–5 iş günü.", oran:0.25}
+  ],
+  paketIndirimi: {2:0.10, 3:0.15},  // 3 ve üzeri %15
+  bolgeler: {
+    merkez: {ad:"Merkez", ucret:0,
+      ilceler:["Ataşehir","Çekmeköy","Kadıköy","Kartal","Maltepe","Sancaktepe","Ümraniye","Üsküdar"]},
+    dis: {ad:"Dış ilçe", ucret:1500,
+      ilceler:["Bağcılar","Bahçelievler","Bakırköy","Bayrampaşa","Beykoz","Beşiktaş","Beyoğlu","Esenler","Eyüpsultan","Fatih","Gaziosmanpaşa","Güngören","Kağıthane","Küçükçekmece","Pendik","Sarıyer","Sultanbeyli","Sultangazi","Şişli","Tuzla","Zeytinburnu"]},
+    uzak: {ad:"Uzak ilçe", ucret:3500,
+      ilceler:["Adalar","Arnavutköy","Avcılar","Başakşehir","Beylikdüzü","Büyükçekmece","Çatalca","Esenyurt","Şile","Silivri"]}
+  }
+};
+/* ======================================================================= */
+
+const $ = s => document.querySelector(s);
+const tl = n => new Intl.NumberFormat("tr-TR").format(n) + " ₺";
+const yuvarla = n => Math.round(n / 250) * 250;
+
+function kart(container, type, name, item, extra=""){
+  const id = name + "-" + item.id;
+  container.insertAdjacentHTML("beforeend",
+    `<div class="opt"><input type="${type}" name="${name}" id="${id}" value="${item.id}">
+     <label for="${id}"><strong>${item.ad}</strong>${item.aciklama?`<small>${item.aciklama}</small>`:""}${extra}</label></div>`);
+}
+AYAR.tipler.forEach(t => kart($("#tip"), "radio", "tip", t));
+AYAR.m2.forEach(m => kart($("#m2"), "radio", "m2", m));
+AYAR.hizmetler.forEach(h => kart($("#hizmet"), "checkbox", "hizmet", h,
+  `<span class="p">${h.fiyat ? tl(h.fiyat) : AYAR.fotoTurleri.map(f=>tl(f.fiyat)).join(" / ")}</span>`));
+AYAR.fotoTurleri.forEach(f => kart($("#fotoTur"), "radio", "fotoTur", f, `<span class="p">${tl(f.fiyat)}</span>`));
+AYAR.ekstralar.forEach(e => kart($("#ekstra"), "checkbox", "ekstra", e,
+  `<span class="p">${e.sabit ? "+" + tl(e.sabit) : "+%" + Math.round(e.oran*100)}</span>`));
+document.getElementById("fotoTur-hdr").checked = true;
+
+const ilceler = Object.entries(AYAR.bolgeler).flatMap(([k,b]) => b.ilceler.map(i => ({ad:i, bolge:k})))
+  .sort((a,b) => a.ad.localeCompare(b.ad, "tr"));
+ilceler.forEach(i => $("#ilce").insertAdjacentHTML("beforeend", `<option value="${i.bolge}|${i.ad}">${i.ad}</option>`));
+
+function secim(){
+  const val = n => (document.querySelector(`input[name="${n}"]:checked`)||{}).value;
+  const all = n => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(i => i.value);
+  const [bolge, ilce] = ($("#ilce").value || "|").split("|");
+  return {tip:val("tip"), m2:val("m2"), bolge, ilce, hizmet:all("hizmet"), fotoTur:val("fotoTur"), ekstra:all("ekstra")};
+}
+
+function hesapla(s){
+  const tip = AYAR.tipler.find(t => t.id === s.tip);
+  const m2 = AYAR.m2.find(m => m.id === s.m2);
+  const satirlar = [];
+  if (!tip || !m2 || !s.hizmet.length) return null;
+  if (m2.carpan === null) return {ozel:true, satirlar};
+  const carpan = tip.carpan * m2.carpan;
+  let ara = 0;
+  s.hizmet.forEach(id => {
+    const h = AYAR.hizmetler.find(x => x.id === id);
+    let fiyat = h.fiyat, ad = h.ad;
+    if (id === "foto"){ const f = AYAR.fotoTurleri.find(x => x.id === s.fotoTur); fiyat = f.fiyat; ad += " (" + f.ad + ")"; }
+    const tutar = fiyat * carpan; ara += tutar;
+    satirlar.push([ad, tutar]);
+  });
+  const n = s.hizmet.length;
+  const oran = n >= 3 ? AYAR.paketIndirimi[3] : (AYAR.paketIndirimi[n] || 0);
+  if (oran){ const ind = ara * oran; ara -= ind; satirlar.push([`Paket indirimi (%${oran*100})`, -ind]); }
+  const videoVar = s.hizmet.some(id => AYAR.hizmetler.find(x => x.id === id).video);
+  AYAR.ekstralar.filter(e => e.sabit && s.ekstra.includes(e.id) && (!e.videoGerekir || videoVar))
+    .forEach(e => { ara += e.sabit; satirlar.push([e.ad, e.sabit]); });
+  const hizli = AYAR.ekstralar.find(e => e.oran && s.ekstra.includes(e.id));
+  if (hizli){ const ek = ara * hizli.oran; ara += ek; satirlar.push([hizli.ad, ek]); }
+  const b = AYAR.bolgeler[s.bolge];
+  if (b && b.ucret){ ara += b.ucret; satirlar.push([`Ulaşım (${b.ad.toLowerCase()})`, b.ucret]); }
+  return {toplam:yuvarla(ara), satirlar};
+}
+
+function guncelle(){
+  const s = secim();
+  // ilçe ipucu
+  const b = AYAR.bolgeler[s.bolge];
+  $("#ilceHint").innerHTML = b ? (b.ucret ? `${b.ad}: ulaşım için <strong>+${tl(b.ucret)}</strong>` : "Merkez bölge: ek ulaşım ücreti yok") : "";
+  // foto alt seçimi
+  $("#fotoSub").classList.toggle("on", s.hizmet.includes("foto"));
+  // seslendirme yalnız video ile
+  const videoVar = s.hizmet.some(id => AYAR.hizmetler.find(x => x.id === id).video);
+  const ses = document.getElementById("ekstra-ses");
+  ses.disabled = !videoVar; if (!videoVar) ses.checked = false;
+  // canlı toplam
+  const r = hesapla(s);
+  const bar = $("#total");
+  bar.classList.toggle("hide", !r || adim === 4);
+  if (r) $("#totalNum").textContent = r.ozel ? "Özel teklif" : tl(r.toplam);
+}
+
+let adim = 1;
+function git(n){
+  adim = n;
+  document.querySelectorAll("section.step").forEach(s => s.classList.toggle("on", +s.dataset.step === n));
+  document.querySelectorAll(".steps li").forEach((li,i) => { li.classList.toggle("on", i+1 === n); li.classList.toggle("done", i+1 < n); });
+  if (n === 4) sonuc();
+  guncelle();
+  $("#hesapla").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+}
+function dogrula(n){
+  const s = secim();
+  if (n === 1){
+    if (!s.tip) return "Mülk tipini seçin.";
+    if (!s.m2) return "Büyüklüğü seçin.";
+    if (!s.ilce) return "İlçeyi seçin.";
+  }
+  if (n === 2 && !s.hizmet.length) return "En az bir hizmet seçin.";
+  return "";
+}
+document.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => {
+  const sec = b.closest("section"); const err = dogrula(adim);
+  const box = sec.querySelector(".err"); if (box) box.textContent = err;
+  if (!err) git(adim + 1);
+}));
+document.querySelectorAll("[data-prev]").forEach(b => b.addEventListener("click", () => git(adim === 4 ? 2 : adim - 1)));
+document.addEventListener("change", e => { const box = e.target.closest("section")?.querySelector(".err"); if (box) box.textContent = ""; guncelle(); });
+
+function sonuc(){
+  const s = secim(), r = hesapla(s);
+  const tip = AYAR.tipler.find(t => t.id === s.tip), m2 = AYAR.m2.find(m => m.id === s.m2);
+  $("#ozetLead").textContent = `${s.ilce} · ${tip.ad} · ${m2.ad}`;
+  const ul = $("#ozet"); ul.innerHTML = "";
+  let mesaj = `Merhaba Norr Medya, gayrimenkul çekimi için teklif almak istiyorum.\n\nMülk: ${tip.ad}, ${m2.ad}\nİlçe: ${s.ilce}\n`;
+  if (r.ozel){
+    $("#big").innerHTML = "Özel teklif";
+    $("#kdv").textContent = "800 m² üstü mülkler için fiyatı keşif sonrası birlikte belirliyoruz.";
+    const hz = s.hizmet.map(id => AYAR.hizmetler.find(x => x.id === id).ad).join(", ");
+    mesaj += `Hizmetler: ${hz}\n`;
+  } else {
+    r.satirlar.forEach(([ad, t]) => ul.insertAdjacentHTML("beforeend",
+      `<li class="${t<0?"minus":""}"><span>${ad}</span><span>${t<0?"−":""}${tl(yuvarla(Math.abs(t)))}</span></li>`));
+    $("#big").innerHTML = `${tl(r.toplam)}<small>+ KDV</small>`;
+    $("#kdv").textContent = `KDV dahil ${tl(Math.round(r.toplam * (1 + AYAR.kdv)))}`;
+    mesaj += r.satirlar.map(([ad,t]) => `• ${ad}: ${t<0?"−":""}${tl(yuvarla(Math.abs(t)))}`).join("\n");
+    mesaj += `\n\nTahmini toplam: ${tl(r.toplam)} + KDV`;
+  }
+  $("#wa").href = `https://wa.me/${AYAR.whatsapp}?text=${encodeURIComponent(mesaj)}`;
+}
+
+/* Gökyüzündeki pencereler: siluetin üstünde tek seferlik yanma */
+(function(){
+  const g = document.getElementById("windows"); const ns = "http://www.w3.org/2000/svg";
+  const xs = [128,232,250,348,452,560,612,700,820,846,930,1044,1066,1180,1290];
+  xs.forEach((x,i) => { const r = document.createElementNS(ns,"rect");
+    r.setAttribute("x",x); r.setAttribute("y",150 + (i%4)*14); r.setAttribute("width",6); r.setAttribute("height",8);
+    r.setAttribute("class","w"); r.style.animationDelay = (0.3 + i*0.12) + "s"; g.appendChild(r); });
+})();
+</script>
+</body>
+</html>
