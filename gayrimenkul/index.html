@@ -100,6 +100,9 @@
   .row-kod button{padding:10px 16px;border-radius:8px;flex:none}
   .kod-msg{font-size:14px;min-height:1.3em;margin-top:6px;color:var(--sis)}
   .kod-msg.ok{color:var(--pencere)}
+  .eksik{font-size:14px;color:#FF9C8A;margin-top:12px;min-height:0}
+  .eksik:empty{display:none}
+  .hata{border-color:#FF9C8A !important;box-shadow:0 0 0 1px #FF9C8A}
   .receipt .fine{margin-top:16px;font-size:13px}
   @media (max-width:900px){main{grid-template-columns:1fr;gap:8px}.receipt{position:static}}
   @media (min-width:901px){.total{display:none !important}}
@@ -188,8 +191,8 @@
       <fieldset><legend>Tip</legend><div class="chips" id="tip"></div></fieldset>
       <fieldset><legend>Büyüklük</legend><div class="chips" id="m2"></div></fieldset>
       <fieldset style="margin-bottom:0">
-        <legend><label for="ilce">İlçe</label></legend>
-        <select id="ilce"><option value="">İlçe seçin</option></select>
+        <legend><label for="ilce">İlçe *</label></legend>
+        <select id="ilce" required><option value="">İlçe seçin</option></select>
         <p class="hint" id="ilceHint"></p>
       </fieldset>
     </section>
@@ -226,8 +229,8 @@
     <div class="form">
       <p class="form-t">Ne zaman çekelim?</p>
       <div class="row2">
-        <label>Tarih<input type="date" id="tarih"></label>
-        <label>Saat<select id="saat"><option value="">Seçin</option></select></label>
+        <label>Tarih *<input type="date" id="tarih" required></label>
+        <label>Saat *<select id="saat" required><option value="">Seçin</option></select></label>
       </div>
       <label for="kod" class="form-t">İndirim kodu</label>
       <div class="row-kod">
@@ -236,6 +239,7 @@
       </div>
       <p class="kod-msg" id="kodMsg" aria-live="polite"></p>
     </div>
+    <p class="eksik" id="eksik" role="alert"></p>
     <a class="wa" id="wa" href="#" target="_blank" rel="noopener" aria-disabled="true">WhatsApp'tan teklif al</a>
     <p class="fine">Fiyatlar 1 Ocak 2027'den itibaren geçerlidir ve KDV hariçtir. Kesin fiyat, mülkü gördükten sonra WhatsApp üzerinden onaylanır.</p>
   </aside>
@@ -485,6 +489,26 @@ function kodUygula(){
 $("#kodBtn").addEventListener("click", kodUygula);
 $("#kod").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); kodUygula(); } });
 $("#tarih").addEventListener("input", guncelle);
+
+/* Zorunlu alanlar: doldurulmadan WhatsApp'a gitmesin */
+$("#wa").addEventListener("click", e => {
+  const s = secim(), eksik = [];
+  document.querySelectorAll(".hata").forEach(el => el.classList.remove("hata"));
+  if (!s.hizmet.length) eksik.push(["en az bir hizmet veya paket", $("#paket")]);
+  if (!s.ilce) eksik.push(["ilçe", $("#ilce")]);
+  if (!$("#tarih").value || $("#tarih").value < $("#tarih").min) eksik.push(["çekim tarihi", $("#tarih")]);
+  if (!$("#saat").value) eksik.push(["saat", $("#saat")]);
+  if (eksik.length){
+    e.preventDefault();
+    eksik.forEach(([, el]) => el.classList.add("hata"));
+    $("#eksik").textContent = "Göndermeden önce şunları seçin: " + eksik.map(x => x[0]).join(", ") + ".";
+    const ilk = eksik[0][1]; ilk.scrollIntoView({behavior:"smooth", block:"center"}); if (ilk.focus) ilk.focus({preventScroll:true});
+  } else $("#eksik").textContent = "";
+});
+["ilce","tarih","saat"].forEach(id => document.getElementById(id).addEventListener("change", () => {
+  document.getElementById(id).classList.remove("hata");
+  if ($("#eksik").textContent) $("#eksik").textContent = "";
+}));
 
 /* Paket seçilince hizmetleri işaretle */
 document.querySelectorAll('input[name="paket"]').forEach(i => i.addEventListener("change", () => {
