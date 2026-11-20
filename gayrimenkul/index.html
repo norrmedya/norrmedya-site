@@ -269,6 +269,7 @@
       <div class="opts wide" id="hizmet"></div>
       <div class="sub" id="fotoSub">
         <p class="hint" style="margin:0 0 10px">Fotoğraf türü</p>
+        <p class="hint" style="margin:0 0 12px">Standart: tek pozlama, doğal ışıkta temiz kareler. HDR: her kare birden fazla pozlamanın birleşimi; pencere dışındaki manzara ve iç mekan aynı anda net görünür.</p>
         <div class="opts" id="fotoTur"></div>
       </div>
     </section>
@@ -317,7 +318,8 @@
     <button type="button" data-f="hepsi" aria-pressed="true">Hepsi</button>
     <button type="button" data-f="video" aria-pressed="false">Videolar</button>
     <button type="button" data-f="drone" aria-pressed="false">Drone</button>
-    <button type="button" data-f="ic" aria-pressed="false">İç mekan</button>
+    <button type="button" data-f="hdr" aria-pressed="false">İç mekan · HDR</button>
+    <button type="button" data-f="standart" aria-pressed="false">İç mekan · Standart</button>
   </div>
   <div class="gal" id="gal"></div>
 </section>
@@ -363,14 +365,14 @@ const AYAR = {
     {id:"reels", ad:"Reels / dikey video", aciklama:"Instagram ve TikTok için satış videosu", fiyat:5990, video:true, img:"img/reels-bagdat.jpg"}
   ],
   fotoTurleri: [
-    {id:"normal", ad:"Normal", fiyat:3990},
+    {id:"normal", ad:"Standart", fiyat:3990},
     {id:"hdr",    ad:"HDR",    fiyat:4990}
   ],
   paketler: [
     {id:"satis", ad:"Satış Paketi", etiket:"En çok tercih edilen", fiyat:{normal:8990, hdr:9990},
-      icerik:["foto","video","drone"], maddeler:["Fotoğraf çekimi, iç + dış (Normal veya HDR)","Yatay tanıtım videosu, iç + dış","Drone fotoğraf ve video"]},
+      icerik:["foto","video","drone"], maddeler:["Fotoğraf çekimi, iç + dış (Standart veya HDR)","Yatay tanıtım videosu, iç + dış","Drone fotoğraf ve video"]},
     {id:"satisPlus", ad:"Satış Paketi + Reels", etiket:"Sosyal medya için", fiyat:{normal:12990, hdr:13990}, sesDahil:true,
-      icerik:["foto","video","drone","reels"], maddeler:["Fotoğraf çekimi, iç + dış (Normal veya HDR)","Yatay tanıtım videosu + dikey Reels","Drone fotoğraf ve video","Profesyonel seslendirme"]}
+      icerik:["foto","video","drone","reels"], maddeler:["Fotoğraf çekimi, iç + dış (Standart veya HDR)","Yatay tanıtım videosu + dikey Reels","Drone fotoğraf ve video","Profesyonel seslendirme"]}
   ],
   indirimKodlari: {"EGE20": 0.20},   // kod: oran (ulaşım hariç tutara uygulanır)
   saatler: ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"],
@@ -406,7 +408,8 @@ AYAR.paketler.forEach(p => $("#paket").insertAdjacentHTML("beforeend",
    <ul>${p.maddeler.map(m => `<li>${m}</li>`).join("")}</ul>
    <span class="was" data-was="${p.id}"></span><span class="now" data-now="${p.id}"></span><span class="save" data-save="${p.id}"></span></label></div>`));
 $("#paket").insertAdjacentHTML("afterend", `<div class="pfoto" role="group" aria-label="Paketteki fotoğraf türü"><span>Paketteki fotoğraflar:</span>
-  <button type="button" data-pf="normal">Normal</button><button type="button" data-pf="hdr">HDR</button></div>
+  <button type="button" data-pf="normal">Standart</button><button type="button" data-pf="hdr">HDR</button></div>
+  <p class="hint" style="margin-top:8px">HDR'da pencere dışı manzara da net çıkar. Farkı aşağıdaki örnek çalışmalarda görebilirsiniz.</p>
   <button type="button" class="clear" id="paketYok" hidden>Paketi kaldır</button>`);
 document.querySelectorAll("[data-pf]").forEach(b => b.addEventListener("click", () => { document.getElementById("fotoTur-" + b.dataset.pf).checked = true; guncelle(); }));
 AYAR.hizmetler.forEach(h => kart($("#hizmet"), "checkbox", "hizmet", h, `<span class="p" data-fiyat="${h.id}"></span>`));
@@ -449,7 +452,7 @@ function hesapla(s){
   let enIyi = null;
   adaylar.forEach(a => {
     const satirlar = []; let top = 0;
-    if (a.paket){ const t = paketFiyat(a.paket, s, c); top += t; satirlar.push([a.paket.ad + " (" + (s.fotoTur === "normal" ? "Normal" : "HDR") + " fotoğraf)", t]); }
+    if (a.paket){ const t = paketFiyat(a.paket, s, c); top += t; satirlar.push([a.paket.ad + " (" + (s.fotoTur === "normal" ? "Standart" : "HDR") + " fotoğraf)", t]); }
     a.kalan.forEach(id => { const f = tekFiyat(id, s, c); top += f.t; satirlar.push([f.ad, f.t]); });
     if (sesIstendi && !(a.paket && a.paket.sesDahil)){ top += ses.sabit; satirlar.push([ses.ad, ses.sabit]); }
     if (!enIyi || top < enIyi.top) enIyi = {top, satirlar, paket:a.paket};
@@ -589,12 +592,16 @@ const ISLER = [
   {tip:"video", kat:["video","drone"], src:"img/reels-arnavutkoy.mp4", poster:"img/reels-arnavutkoy.jpg", ai:true,
     baslik:"Arnavutköy, 14.322 m² arsa", alt:"Yapay zeka destekli Reels · 3D bina modeli, konum anlatımı"},
   {tip:"foto", kat:["drone"], src:"img/g-moda-burun.jpg", baslik:"Moda burnu, Kadıköy", alt:"Drone fotoğraf"},
-  {tip:"foto", kat:["ic"], src:"img/g-salon-2.jpg", baslik:"Boş daire, salon", alt:"İç mekan fotoğraf"},
+  {tip:"foto", kat:["hdr"], src:"img/g-salon-2.jpg", baslik:"Boş daire, salon", alt:"İç mekan · HDR"},
   {tip:"foto", kat:["drone"], src:"img/g-site-havuz.jpg", baslik:"Havuzlu konut sitesi", alt:"Drone fotoğraf"},
-  {tip:"foto", kat:["ic"], src:"img/g-salon-3.jpg", baslik:"Salon ve giriş", alt:"İç mekan fotoğraf"},
+  {tip:"foto", kat:["hdr"], src:"img/g-salon-3.jpg", baslik:"Salon ve giriş", alt:"İç mekan · HDR"},
   {tip:"foto", kat:["drone"], src:"img/g-arsa-deniz.jpg", baslik:"Deniz kenarı araziler", alt:"Drone fotoğraf"},
   {tip:"foto", kat:["drone"], src:"img/g-kadikoy.jpg", baslik:"Kadıköy ve tarihi yarımada", alt:"Drone fotoğraf"},
-  {tip:"foto", kat:["ic"], src:"img/foto-salon.jpg", baslik:"Orman manzaralı salon", alt:"İç mekan fotoğraf"},
+  {tip:"foto", kat:["hdr"], src:"img/foto-salon.jpg", baslik:"Orman manzaralı salon", alt:"İç mekan · HDR"},
+  {tip:"foto", kat:["standart"], src:"img/s-salon-1.jpg", baslik:"Parkeli salon", alt:"İç mekan · Standart"},
+  {tip:"foto", kat:["standart"], src:"img/s-cati-kati.jpg", baslik:"Çatı katı, açık mutfak", alt:"İç mekan · Standart"},
+  {tip:"foto", kat:["standart"], src:"img/s-kapali-balkon.jpg", baslik:"Kapalı balkon", alt:"İç mekan · Standart"},
+  {tip:"foto", kat:["standart"], src:"img/s-mutfak.jpg", baslik:"Mutfak", alt:"İç mekan · Standart"},
   {tip:"foto", kat:["drone"], src:"img/drone-villa.jpg", baslik:"Bahçeli villa", alt:"Drone fotoğraf"}
 ];
 {
