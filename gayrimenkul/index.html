@@ -66,16 +66,34 @@
   @media (max-width:600px){.packs{grid-template-columns:1fr}}
   .work{max-width:1180px;margin:72px auto 0;padding:0 clamp(20px,5vw,40px)}
   .work h2{margin-bottom:8px}
-  .work-grid{display:grid;grid-template-columns:minmax(0,236px) minmax(0,1fr);gap:16px;margin-top:28px}
-  .reel{position:relative;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:9/16;align-self:start}
-  .reel video{width:100%;height:100%;object-fit:cover;display:block}
-  .reel button{position:absolute;right:12px;bottom:12px;padding:10px 16px;font-size:14px;background:rgba(13,27,38,.75);border-color:rgba(255,255,255,.3)}
-  .reel figcaption,.photos figcaption{font-size:14px;color:var(--sis);margin-top:8px}
-  .photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-content:start}
-  .photos figure{margin:0}
-  .photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
-  .photos figure.wide{grid-column:span 2}.photos figure.wide img{aspect-ratio:auto;height:100%;max-height:360px}
-  @media (max-width:800px){.work-grid{grid-template-columns:1fr}.reel{max-width:340px}.photos{grid-template-columns:1fr 1fr}.photos figure.wide{grid-column:span 2}}
+  .filt{margin:4px 0 20px}
+  .filt button{padding:10px 18px;font-size:15px}
+  .filt button[aria-pressed="true"]{background:var(--kirec);border-color:var(--kirec);color:var(--gece)}
+  .gal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:190px;grid-auto-flow:dense;gap:12px}
+  .gal button{all:unset;position:relative;border-radius:10px;overflow:hidden;cursor:pointer;background:var(--gece-2)}
+  .gal button:focus-visible{outline:2px solid var(--pencere);outline-offset:3px}
+  .gal .v{grid-row:span 2}
+  .gal img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+  .gal button:hover img{transform:scale(1.03)}
+  .gal .cap{position:absolute;left:0;right:0;bottom:0;padding:28px 14px 12px;background:linear-gradient(transparent,rgba(8,16,24,.85));font-size:14px;line-height:1.35}
+  .gal .cap b{display:block;font-weight:600;font-size:15px}
+  .gal .cap span{color:var(--sis)}
+  .gal .play{position:absolute;top:50%;left:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:rgba(13,27,38,.6);border:1.5px solid rgba(255,255,255,.7)}
+  .gal .play::after{content:"";position:absolute;left:23px;top:18px;border-left:16px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent}
+  .gal .ai{position:absolute;top:12px;left:12px;font-size:12px;font-weight:600;background:var(--pencere);color:var(--gece);padding:3px 9px;border-radius:999px}
+  .gal [hidden]{display:none}
+  @media (max-width:800px){.gal{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:150px}}
+  @media (prefers-reduced-motion:reduce){.gal img{transition:none}}
+  .lb{border:0;padding:0;background:rgba(5,10,15,.95);max-width:100vw;max-height:100vh;width:100vw;height:100vh;color:var(--kirec)}
+  .lb::backdrop{background:rgba(5,10,15,.92)}
+  .lb-in{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 64px 20px;gap:12px}
+  .lb-media{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;width:100%}
+  .lb-media img,.lb-media video{max-width:100%;max-height:100%;border-radius:8px;display:block}
+  .lb-cap{font-size:15px;color:var(--sis);text-align:center;max-width:60ch}
+  .lb-x{position:absolute;top:14px;right:16px;padding:10px 18px;font-size:15px;background:rgba(13,27,38,.7)}
+  .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:64px;padding:0;font-size:34px;line-height:1;border-radius:10px;background:rgba(13,27,38,.7)}
+  .lb-prev{left:10px}.lb-next{right:10px}
+  @media (max-width:600px){.lb-in{padding:60px 8px 76px}.lb-nav{top:auto;bottom:12px;transform:none;height:48px}}
 
   /* Sihirbaz */
   main{max-width:1180px;margin:0 auto;padding:56px clamp(20px,5vw,40px) 0;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:56px;align-items:start}
@@ -172,6 +190,7 @@
   <a class="wordmark" href="/" aria-label="Norr Medya ana sayfa"><img src="norr-logo.png" alt="Norr Medya" width="61" height="84"></a>
   <nav>
     <a href="#hesapla">Fiyat hesapla</a>
+    <a href="#isler">Örnek çalışmalar</a>
     <a class="cta" href="https://wa.me/905383132651" target="_blank" rel="noopener">WhatsApp</a>
   </nav>
 </header>
@@ -251,24 +270,26 @@
 </div>
 
 <section class="work" id="isler">
-  <h2>Yaptığımız işlerden</h2>
-  <p class="lead">Fiyat hesapladığınız hizmetlerin gerçek örnekleri. Hepsi bizim çekimimiz ve kurgumuz.</p>
-  <div class="work-grid">
-    <figure class="reel">
-      <video id="reel" src="img/reels-bagdat.mp4" poster="img/reels-bagdat.jpg" muted loop playsinline preload="none" aria-label="Bağdat Caddesi satış Reels'i"></video>
-      <button type="button" id="ses">Sesi aç</button>
-    </figure>
-    <div class="photos">
-      <figure><img src="img/g-moda-burun.jpg" alt="Moda burnu ve Kadıköy sahilinin drone fotoğrafı" loading="lazy"></figure>
-      <figure><img src="img/g-salon-2.jpg" alt="Boş salon, geniş açı iç mekan fotoğrafı" loading="lazy"></figure>
-      <figure><img src="img/g-site-havuz.jpg" alt="Havuzlu konut sitesinin drone fotoğrafı" loading="lazy"></figure>
-      <figure><img src="img/g-salon-3.jpg" alt="Salon ve giriş, iç mekan fotoğrafı" loading="lazy"></figure>
-      <figure><img src="img/g-arsa-deniz.jpg" alt="Deniz kenarındaki arazilerin drone fotoğrafı" loading="lazy"></figure>
-      <figure><img src="img/g-kadikoy.jpg" alt="Kadıköy ve tarihi yarımada manzaralı drone fotoğrafı" loading="lazy"></figure>
-    </div>
+  <h2>Örnek çalışmalar</h2>
+  <p class="lead">Fiyatını hesapladığınız hizmetlerin gerçek örnekleri. Hepsi bizim çekimimiz ve kurgumuz. İzlemek ya da büyütmek için tıklayın.</p>
+  <div class="chips filt" role="group" aria-label="Çalışmaları filtrele">
+    <button type="button" data-f="hepsi" aria-pressed="true">Hepsi</button>
+    <button type="button" data-f="video" aria-pressed="false">Videolar</button>
+    <button type="button" data-f="drone" aria-pressed="false">Drone</button>
+    <button type="button" data-f="ic" aria-pressed="false">İç mekan</button>
   </div>
-  <p class="hint" style="margin-top:12px">Soldaki video: Bağdat Caddesi'nde satılık daire için hazırladığımız dikey satış videosu.</p>
+  <div class="gal" id="gal"></div>
 </section>
+
+<dialog class="lb" id="lb" aria-label="Çalışma önizleme">
+  <div class="lb-in">
+    <div class="lb-media" id="lbMedia"></div>
+    <p class="lb-cap" id="lbCap"></p>
+  </div>
+  <button type="button" class="lb-x" id="lbX" aria-label="Kapat">Kapat</button>
+  <button type="button" class="lb-nav lb-prev" id="lbPrev" aria-label="Önceki">‹</button>
+  <button type="button" class="lb-nav lb-next" id="lbNext" aria-label="Sonraki">›</button>
+</dialog>
 
 <footer>
   <span>© 2027 Norr Medya · İstanbul</span>
@@ -520,21 +541,55 @@ $("#paketYok").addEventListener("click", () => { document.querySelectorAll('inpu
 document.addEventListener("change", guncelle);
 guncelle();
 
-/* Örnek Reels: görünürken sessiz oynat, butonla ses */
-(function(){
-  const v = document.getElementById("reel"), b = document.getElementById("ses");
-  const az = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if ("IntersectionObserver" in window){
-    const io = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting && !az) v.play().catch(()=>{}); else if (!e.isIntersecting) v.pause();
-    }), {threshold:.4});
-    io.observe(v);
+/* ===== ÖRNEK ÇALIŞMALAR — yeni iş eklemek için bu listeye bir satır ekleyin ===== */
+const ISLER = [
+  {tip:"video", kat:["video","drone"], src:"img/reels-bagdat.mp4", poster:"img/reels-bagdat.jpg",
+    baslik:"Bağdat Caddesi, satılık daire", alt:"Reels · drone + seslendirme"},
+  {tip:"video", kat:["video","drone"], src:"img/reels-arnavutkoy.mp4", poster:"img/reels-arnavutkoy.jpg", ai:true,
+    baslik:"Arnavutköy, 14.322 m² arsa", alt:"Yapay zeka destekli Reels · 3D bina modeli, konum anlatımı"},
+  {tip:"foto", kat:["drone"], src:"img/g-moda-burun.jpg", baslik:"Moda burnu, Kadıköy", alt:"Drone fotoğraf"},
+  {tip:"foto", kat:["ic"], src:"img/g-salon-2.jpg", baslik:"Boş daire, salon", alt:"İç mekan fotoğraf"},
+  {tip:"foto", kat:["drone"], src:"img/g-site-havuz.jpg", baslik:"Havuzlu konut sitesi", alt:"Drone fotoğraf"},
+  {tip:"foto", kat:["ic"], src:"img/g-salon-3.jpg", baslik:"Salon ve giriş", alt:"İç mekan fotoğraf"},
+  {tip:"foto", kat:["drone"], src:"img/g-arsa-deniz.jpg", baslik:"Deniz kenarı araziler", alt:"Drone fotoğraf"},
+  {tip:"foto", kat:["drone"], src:"img/g-kadikoy.jpg", baslik:"Kadıköy ve tarihi yarımada", alt:"Drone fotoğraf"},
+  {tip:"foto", kat:["ic"], src:"img/foto-salon.jpg", baslik:"Orman manzaralı salon", alt:"İç mekan fotoğraf"},
+  {tip:"foto", kat:["drone"], src:"img/drone-villa.jpg", baslik:"Bahçeli villa", alt:"Drone fotoğraf"}
+];
+{
+  const gal = $("#gal");
+  gal.innerHTML = ISLER.map((w,i) => `<button type="button" class="${w.tip === "video" ? "v" : ""}" data-i="${i}" data-kat="${w.kat.join(" ")}"
+      aria-label="${w.baslik}, ${w.alt}${w.tip === "video" ? ", videoyu oynat" : ", büyüt"}">
+      <img src="${w.poster || w.src}" alt="" loading="lazy">
+      ${w.ai ? '<span class="ai">Yapay zeka destekli</span>' : ""}
+      ${w.tip === "video" ? '<span class="play" aria-hidden="true"></span>' : ""}
+      <span class="cap"><b>${w.baslik}</b><span>${w.alt}</span></span></button>`).join("");
+
+  document.querySelectorAll("[data-f]").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll("[data-f]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    gal.querySelectorAll("[data-i]").forEach(el => el.hidden = b.dataset.f !== "hepsi" && !el.dataset.kat.split(" ").includes(b.dataset.f));
+  }));
+
+  const lb = $("#lb"); let cur = 0;
+  const gorunen = () => [...gal.querySelectorAll("[data-i]:not([hidden])")].map(el => +el.dataset.i);
+  function ac(i){
+    cur = i; const w = ISLER[i];
+    $("#lbMedia").innerHTML = w.tip === "video"
+      ? `<video src="${w.src}" poster="${w.poster}" controls autoplay playsinline></video>`
+      : `<img src="${w.src}" alt="${w.baslik}, ${w.alt}">`;
+    $("#lbCap").textContent = w.baslik + " · " + w.alt;
+    if (!lb.open) { if (lb.showModal) lb.showModal(); else lb.setAttribute("open",""); }
   }
-  b.addEventListener("click", () => {
-    v.muted = !v.muted; b.textContent = v.muted ? "Sesi aç" : "Sesi kapat";
-    if (v.paused) v.play().catch(()=>{});
-  });
-})();
+  function kapat(){ $("#lbMedia").innerHTML = ""; if (lb.close) lb.close(); else lb.removeAttribute("open"); }
+  function git(d){ const g = gorunen(); const k = g.indexOf(cur); ac(g[(k + d + g.length) % g.length]); }
+  gal.addEventListener("click", e => { const b = e.target.closest("[data-i]"); if (b) ac(+b.dataset.i); });
+  $("#lbX").addEventListener("click", kapat);
+  $("#lbPrev").addEventListener("click", () => git(-1));
+  $("#lbNext").addEventListener("click", () => git(1));
+  lb.addEventListener("click", e => { if (e.target === lb || e.target.classList.contains("lb-in") || e.target.classList.contains("lb-media")) kapat(); });
+  lb.addEventListener("close", () => { $("#lbMedia").innerHTML = ""; });
+  document.addEventListener("keydown", e => { if (!lb.open) return; if (e.key === "ArrowLeft") git(-1); if (e.key === "ArrowRight") git(1); });
+}
 </script>
 </body>
 </html>
