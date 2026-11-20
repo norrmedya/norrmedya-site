@@ -44,6 +44,23 @@
   .hero p{max-width:46ch;color:#DCE3E8;margin-top:22px;font-size:19px}
   .hero .credit{font-size:13px;color:var(--sis);margin-top:28px}
   .opt label img{display:block;width:calc(100% + 36px);margin:-16px -18px 14px;aspect-ratio:16/9;object-fit:cover;border-radius:9px 9px 0 0}
+  .packs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .pack{position:relative}
+  .pack input{position:absolute;opacity:0;inset:0;cursor:pointer}
+  .pack label{display:block;height:100%;padding:22px;border:1.5px solid var(--ufuk);border-radius:12px;background:var(--gece-2);cursor:pointer}
+  .pack input:checked + label{border-color:var(--pencere);background:#1B3247}
+  .pack input:focus-visible + label{outline:2px solid var(--pencere);outline-offset:3px}
+  .pack .tag{display:inline-block;font-size:13px;font-weight:600;color:var(--gece);background:var(--pencere);border-radius:999px;padding:3px 10px;margin-bottom:12px}
+  .pack strong{display:block;font-family:var(--wide);font-stretch:125%;font-size:20px;line-height:1.15}
+  .pack ul{list-style:none;margin:12px 0 16px;color:var(--sis);font-size:15px}
+  .pack li{padding:3px 0 3px 22px;position:relative}
+  .pack li::before{content:"";position:absolute;left:2px;top:.62em;width:10px;height:6px;border-left:2px solid var(--pencere);border-bottom:2px solid var(--pencere);transform:rotate(-45deg)}
+  .pack .was{color:var(--sis);text-decoration:line-through;font-size:15px}
+  .pack .now{display:block;font-family:var(--display);font-weight:800;font-size:44px;line-height:1;color:var(--kirec)}
+  .pack input:checked + label .now{color:var(--pencere)}
+  .pack .save{font-size:14px;color:var(--pencere);margin-top:4px;display:block}
+  .clear{margin-top:10px;font-size:14px;padding:8px 16px}
+  @media (max-width:600px){.packs{grid-template-columns:1fr}}
   .work{max-width:1180px;margin:72px auto 0;padding:0 clamp(20px,5vw,40px)}
   .work h2{margin-bottom:8px}
   .work-grid{display:grid;grid-template-columns:minmax(0,236px) minmax(0,1fr);gap:16px;margin-top:28px}
@@ -165,8 +182,14 @@
     </section>
 
     <section class="block">
-      <h2>Hizmetler <small>istediğinizi seçin</small></h2>
-      <p class="lead">Tek bir hizmet de seçebilirsiniz. İki hizmette %10, üç ve üzerinde %15 indirim otomatik uygulanır.</p>
+      <h2>Paketler <small>en çok tercih edilen</small></h2>
+      <p class="lead">Satış için gereken her şey tek pakette. İç ve dış çekim dahil.</p>
+      <div class="packs" id="paket"></div>
+    </section>
+
+    <section class="block">
+      <h2>Tek tek seçin <small>sadece ihtiyacınız olanı</small></h2>
+      <p class="lead">Sadece drone ya da sadece fotoğraf da alabilirsiniz. Paketteki hizmetlerin hepsini seçerseniz paket fiyatı otomatik uygulanır.</p>
       <div class="opts wide" id="hizmet"></div>
       <div class="sub" id="fotoSub">
         <p class="hint" style="margin:0 0 10px">Fotoğraf türü</p>
@@ -228,48 +251,52 @@ const AYAR = {
   whatsapp: "905387312651",
   kdv: 0.20,
   tipler: [
-    {id:"daire",  ad:"Daire",            carpan:1.00},
-    {id:"villa",  ad:"Villa / Müstakil", carpan:1.20},
-    {id:"ofis",   ad:"Ofis / Dükkan",    carpan:1.15},
+    {id:"daire",  ad:"Daire",              carpan:1.00},
+    {id:"villa",  ad:"Villa / Müstakil",   carpan:1.20},
+    {id:"ofis",   ad:"Ofis / Dükkan",      carpan:1.15},
     {id:"bina",   ad:"Bina / Yurt / Otel", carpan:1.40},
-    {id:"arsa",   ad:"Arsa",             carpan:0.80}
+    {id:"arsa",   ad:"Arsa",               carpan:0.80}
   ],
   m2: [
-    {id:"a", ad:"0–100 m²",   carpan:1.00},
-    {id:"b", ad:"100–200 m²", carpan:1.25},
-    {id:"c", ad:"200–400 m²", carpan:1.50},
-    {id:"d", ad:"400–800 m²", carpan:2.00},
+    {id:"a", ad:"0–100 m²",    carpan:1.00},
+    {id:"b", ad:"100–200 m²",  carpan:1.25},
+    {id:"c", ad:"200–400 m²",  carpan:1.50},
+    {id:"d", ad:"400–800 m²",  carpan:2.00},
     {id:"e", ad:"800 m² üstü", carpan:null}   // null = özel teklif
   ],
   hizmetler: [
-    {id:"foto",   ad:"Fotoğraf çekimi",   aciklama:"İç ve dış mekan, düzenlenmiş kareler", fiyat:null, img:"img/foto-salon.jpg"},
-    {id:"video",  ad:"Tanıtım videosu",   aciklama:"Yatay, sinematik, 60–90 sn", fiyat:11000, video:true, img:"img/video-bina.jpg"},
-    {id:"drone",  ad:"Drone çekimi",      aciklama:"Havadan fotoğraf ve kısa video", fiyat:7500, img:"img/drone-villa.jpg"},
-    {id:"reels",  ad:"Reels / dikey video", aciklama:"Instagram ve TikTok için satış videosu", fiyat:8500, video:true, img:"img/reels-bagdat.jpg"}
+    {id:"foto",  ad:"Fotoğraf çekimi",     aciklama:"İç ve dış mekan, düzenlenmiş kareler", fiyat:null, img:"img/foto-salon.jpg"},
+    {id:"video", ad:"Tanıtım videosu",     aciklama:"Yatay, sinematik, iç ve dış çekim", fiyat:6990, video:true, img:"img/video-bina.jpg"},
+    {id:"drone", ad:"Drone çekimi",        aciklama:"Havadan fotoğraf ve kısa video", fiyat:3990, img:"img/drone-villa.jpg"},
+    {id:"reels", ad:"Reels / dikey video", aciklama:"Instagram ve TikTok için satış videosu", fiyat:5990, video:true, img:"img/reels-bagdat.jpg"}
   ],
   fotoTurleri: [
-    {id:"normal", ad:"Normal", fiyat:5500},
-    {id:"hdr",    ad:"HDR",    fiyat:7500}
+    {id:"normal", ad:"Normal", fiyat:3990},
+    {id:"hdr",    ad:"HDR",    fiyat:4990}
+  ],
+  paketler: [
+    {id:"satis", ad:"Satış Paketi", etiket:"En çok tercih edilen", fiyat:9990,
+      icerik:["foto","video","drone"], maddeler:["HDR fotoğraf (iç + dış)","Tanıtım videosu (iç + dış)","Drone fotoğraf ve video"]},
+    {id:"satisPlus", ad:"Satış Paketi + Reels", etiket:"Sosyal medya için", fiyat:13990, sesDahil:true,
+      icerik:["foto","video","drone","reels"], maddeler:["Satış Paketi'ndeki her şey","Reels / dikey satış videosu","Profesyonel seslendirme"]}
   ],
   ekstralar: [
-    {id:"ses",   ad:"Seslendirme", aciklama:"Profesyonel dış ses ile anlatım. Video veya Reels seçilince açılır.", sabit:3500, videoGerekir:true},
-    {id:"hizli", ad:"24 saatte teslim", aciklama:"Standart teslim 3–5 iş günü.", oran:0.25}
+    {id:"ses",   ad:"Seslendirme",      aciklama:"Profesyonel dış ses ile anlatım. Video veya Reels seçilince açılır.", sabit:2490, videoGerekir:true},
+    {id:"hizli", ad:"24 saatte teslim", aciklama:"Standart teslim 3–5 iş günü.", sabit:1990}
   ],
-  paketIndirimi: {2:0.10, 3:0.15},  // 3 ve üzeri %15
   bolgeler: {
-    merkez: {ad:"Merkez", ucret:0,
-      ilceler:["Ataşehir","Çekmeköy","Kadıköy","Kartal","Maltepe","Sancaktepe","Ümraniye","Üsküdar"]},
-    dis: {ad:"Dış ilçe", ucret:1500,
-      ilceler:["Bağcılar","Bahçelievler","Bakırköy","Bayrampaşa","Beykoz","Beşiktaş","Beyoğlu","Esenler","Eyüpsultan","Fatih","Gaziosmanpaşa","Güngören","Kağıthane","Küçükçekmece","Pendik","Sarıyer","Sultanbeyli","Sultangazi","Şişli","Tuzla","Zeytinburnu"]},
-    uzak: {ad:"Uzak ilçe", ucret:3500,
-      ilceler:["Adalar","Arnavutköy","Avcılar","Başakşehir","Beylikdüzü","Büyükçekmece","Çatalca","Esenyurt","Şile","Silivri"]}
+    anadolu: {ad:"Anadolu yakası", ucret:0,
+      ilceler:["Adalar","Ataşehir","Beykoz","Çekmeköy","Kadıköy","Kartal","Maltepe","Pendik","Sancaktepe","Sultanbeyli","Şile","Tuzla","Ümraniye","Üsküdar"]},
+    avrupa: {ad:"Avrupa yakası", ucret:1500,
+      ilceler:["Arnavutköy","Avcılar","Bağcılar","Bahçelievler","Bakırköy","Başakşehir","Bayrampaşa","Beşiktaş","Beylikdüzü","Beyoğlu","Büyükçekmece","Çatalca","Esenler","Esenyurt","Eyüpsultan","Fatih","Gaziosmanpaşa","Güngören","Kağıthane","Küçükçekmece","Sarıyer","Silivri","Sultangazi","Şişli","Zeytinburnu"]}
   }
 };
 /* ======================================================================= */
 
 const $ = s => document.querySelector(s);
 const tl = n => new Intl.NumberFormat("tr-TR").format(n) + " ₺";
-const yuvarla = n => Math.round(n / 250) * 250;
+/* Psikolojik fiyat: bir üst 500'lüğe yuvarla, 10 düş (4.987 → 4.990, 12.140 → 12.490) */
+const psik = n => Math.max(0, Math.ceil(Math.round(n) / 500) * 500 - 10);
 
 function kart(container, type, name, item, extra=""){
   const id = name + "-" + item.id;
@@ -279,17 +306,22 @@ function kart(container, type, name, item, extra=""){
 }
 AYAR.tipler.forEach(t => kart($("#tip"), "radio", "tip", t));
 AYAR.m2.forEach(m => kart($("#m2"), "radio", "m2", m));
+AYAR.paketler.forEach(p => $("#paket").insertAdjacentHTML("beforeend",
+  `<div class="pack"><input type="radio" name="paket" id="paket-${p.id}" value="${p.id}">
+   <label for="paket-${p.id}"><span class="tag">${p.etiket}</span><strong>${p.ad}</strong>
+   <ul>${p.maddeler.map(m => `<li>${m}</li>`).join("")}</ul>
+   <span class="was" data-was="${p.id}"></span><span class="now" data-now="${p.id}"></span><span class="save" data-save="${p.id}"></span></label></div>`));
+$("#paket").insertAdjacentHTML("afterend", `<button type="button" class="clear" id="paketYok" hidden>Paketi kaldır</button>`);
 AYAR.hizmetler.forEach(h => kart($("#hizmet"), "checkbox", "hizmet", h, `<span class="p" data-fiyat="${h.id}"></span>`));
 AYAR.fotoTurleri.forEach(f => kart($("#fotoTur"), "radio", "fotoTur", f, `<span class="p" data-foto="${f.id}"></span>`));
-AYAR.ekstralar.forEach(e => kart($("#ekstra"), "checkbox", "ekstra", e,
-  `<span class="p">${e.sabit ? "+" + tl(e.sabit) : "+%" + Math.round(e.oran*100)}</span>`));
+AYAR.ekstralar.forEach(e => kart($("#ekstra"), "checkbox", "ekstra", e, `<span class="p">+${tl(e.sabit)}</span>`));
 document.getElementById("tip-daire").checked = true;
 document.getElementById("m2-a").checked = true;
 document.getElementById("fotoTur-hdr").checked = true;
 
 const ilceler = Object.entries(AYAR.bolgeler).flatMap(([k,b]) => b.ilceler.map(i => ({ad:i, bolge:k})))
   .sort((a,b) => a.ad.localeCompare(b.ad, "tr"));
-ilceler.forEach(i => $("#ilce").insertAdjacentHTML("beforeend", `<option value="${i.bolge}|${i.ad}">${i.ad}</option>`));
+ilceler.forEach(i => $("#ilce").insertAdjacentHTML("beforeend", `<option value="${i.bolge}|${i.ad}">${i.ad} (${AYAR.bolgeler[i.bolge].ad})</option>`));
 
 function secim(){
   const val = n => (document.querySelector(`input[name="${n}"]:checked`)||{}).value;
@@ -298,49 +330,69 @@ function secim(){
   return {tip:val("tip"), m2:val("m2"), bolge, ilce, hizmet:all("hizmet"), fotoTur:val("fotoTur"), ekstra:all("ekstra")};
 }
 const carpanOf = s => { const m = AYAR.m2.find(x => x.id === s.m2); return m.carpan === null ? null : AYAR.tipler.find(t => t.id === s.tip).carpan * m.carpan; };
-function hizmetFiyat(id, s){
+const tekFiyat = (id, s, c) => {
   const h = AYAR.hizmetler.find(x => x.id === id);
   const f = id === "foto" ? AYAR.fotoTurleri.find(x => x.id === s.fotoTur) : null;
-  return {ad: h.ad + (f ? " (" + f.ad + ")" : ""), taban: f ? f.fiyat : h.fiyat};
-}
+  return {ad: h.ad + (f ? " (" + f.ad + ")" : ""), t: psik((f ? f.fiyat : h.fiyat) * c)};
+};
+const ayriToplam = (p, c) => p.icerik.reduce((t,id) => t + psik((id === "foto" ? AYAR.fotoTurleri.find(f=>f.id==="hdr").fiyat : AYAR.hizmetler.find(h=>h.id===id).fiyat) * c), 0)
+  + (p.sesDahil ? AYAR.ekstralar.find(e=>e.id==="ses").sabit : 0);
 
+/* Seçilen hizmetler için en ucuz kombinasyonu bul (tek tek / paket) */
 function hesapla(s){
-  const carpan = carpanOf(s);
+  const c = carpanOf(s);
   if (!s.hizmet.length) return null;
-  if (carpan === null) return {ozel:true, satirlar:[]};
-  const satirlar = []; let ara = 0;
-  s.hizmet.forEach(id => { const {ad, taban} = hizmetFiyat(id, s); const t = yuvarla(taban * carpan); ara += t; satirlar.push([ad, t]); });
-  const n = s.hizmet.length;
-  const oran = n >= 3 ? AYAR.paketIndirimi[3] : (AYAR.paketIndirimi[n] || 0);
-  if (oran){ const ind = yuvarla(ara * oran); ara -= ind; satirlar.push([`Paket indirimi (%${oran*100})`, -ind]); }
+  if (c === null) return {ozel:true, satirlar:[]};
+  const ses = AYAR.ekstralar.find(e => e.id === "ses");
   const videoVar = s.hizmet.some(id => AYAR.hizmetler.find(x => x.id === id).video);
-  AYAR.ekstralar.filter(e => e.sabit && s.ekstra.includes(e.id) && (!e.videoGerekir || videoVar))
-    .forEach(e => { ara += e.sabit; satirlar.push([e.ad, e.sabit]); });
-  const hizli = AYAR.ekstralar.find(e => e.oran && s.ekstra.includes(e.id));
-  if (hizli){ const ek = yuvarla(ara * hizli.oran); ara += ek; satirlar.push([hizli.ad, ek]); }
+  const sesIstendi = s.ekstra.includes("ses") && videoVar;
+  const adaylar = [{paket:null, kalan:s.hizmet}];
+  AYAR.paketler.forEach(p => { if (p.icerik.every(id => s.hizmet.includes(id))) adaylar.push({paket:p, kalan:s.hizmet.filter(id => !p.icerik.includes(id))}); });
+  let enIyi = null;
+  adaylar.forEach(a => {
+    const satirlar = []; let top = 0;
+    if (a.paket){ const t = psik(a.paket.fiyat * c); top += t; satirlar.push([a.paket.ad, t]); }
+    a.kalan.forEach(id => { const f = tekFiyat(id, s, c); top += f.t; satirlar.push([f.ad, f.t]); });
+    if (sesIstendi && !(a.paket && a.paket.sesDahil)){ top += ses.sabit; satirlar.push([ses.ad, ses.sabit]); }
+    if (!enIyi || top < enIyi.top) enIyi = {top, satirlar, paket:a.paket};
+  });
+  const r = enIyi;
+  if (r.paket){ const ayri = ayriToplam(r.paket, c); r.tasarruf = ayri - psik(r.paket.fiyat * c); }
+  const hizli = AYAR.ekstralar.find(e => e.id === "hizli");
+  if (s.ekstra.includes("hizli")){ r.top += hizli.sabit; r.satirlar.push([hizli.ad, hizli.sabit]); }
   const b = AYAR.bolgeler[s.bolge];
-  if (b && b.ucret){ ara += b.ucret; satirlar.push([`Ulaşım (${b.ad.toLowerCase()})`, b.ucret]); }
-  return {toplam: yuvarla(ara), satirlar};
+  if (b && b.ucret){ r.top += b.ucret; r.satirlar.push([`Ulaşım (${b.ad})`, b.ucret]); }
+  r.toplam = r.top;
+  return r;
 }
 
 function guncelle(){
-  const s = secim(), carpan = carpanOf(s);
-  // kartlardaki fiyatlar bu mülke göre
+  const s = secim(), c = carpanOf(s);
+  // paket kartları
+  AYAR.paketler.forEach(p => {
+    const now = document.querySelector(`[data-now="${p.id}"]`), was = document.querySelector(`[data-was="${p.id}"]`), sv = document.querySelector(`[data-save="${p.id}"]`);
+    if (c === null){ now.textContent = "Özel teklif"; was.textContent = ""; sv.textContent = ""; return; }
+    const fiyat = psik(p.fiyat * c), ayri = ayriToplam(p, c);
+    was.textContent = "Ayrı ayrı " + tl(ayri); now.textContent = tl(fiyat); sv.textContent = tl(ayri - fiyat) + " daha az ödersiniz";
+  });
+  // paket seçimi hizmetlerle eşleşiyor mu?
+  const tamEsles = AYAR.paketler.find(p => p.icerik.length === s.hizmet.length && p.icerik.every(id => s.hizmet.includes(id)));
+  document.querySelectorAll('input[name="paket"]').forEach(i => i.checked = !!tamEsles && i.value === tamEsles.id);
+  $("#paketYok").hidden = !tamEsles;
+  // tek tek kart fiyatları
   document.querySelectorAll("[data-fiyat]").forEach(el => {
     const id = el.dataset.fiyat;
-    if (carpan === null){ el.textContent = "Özel teklif"; return; }
-    el.textContent = id === "foto"
-      ? AYAR.fotoTurleri.map(f => tl(yuvarla(f.fiyat * carpan))).join(" / ")
-      : tl(yuvarla(AYAR.hizmetler.find(h => h.id === id).fiyat * carpan));
+    if (c === null){ el.textContent = "Özel teklif"; return; }
+    el.textContent = id === "foto" ? AYAR.fotoTurleri.map(f => tl(psik(f.fiyat * c))).join(" / ") : tl(psik(AYAR.hizmetler.find(h => h.id === id).fiyat * c));
   });
   document.querySelectorAll("[data-foto]").forEach(el => {
-    el.textContent = carpan === null ? "Özel teklif" : tl(yuvarla(AYAR.fotoTurleri.find(f => f.id === el.dataset.foto).fiyat * carpan));
+    el.textContent = c === null ? "Özel teklif" : tl(psik(AYAR.fotoTurleri.find(f => f.id === el.dataset.foto).fiyat * c));
   });
   const b = AYAR.bolgeler[s.bolge];
-  $("#ilceHint").innerHTML = b ? (b.ucret ? `${b.ad}: ulaşım için <strong>+${tl(b.ucret)}</strong>` : "Ek ulaşım ücreti yok") : "";
+  $("#ilceHint").innerHTML = b ? (b.ucret ? `${b.ad}: ulaşım için <strong>+${tl(b.ucret)}</strong>` : `${b.ad}: ek ulaşım ücreti yok`) : "Anadolu yakasında ulaşım ücretsiz, Avrupa yakası +1.500 ₺.";
   $("#fotoSub").classList.toggle("on", s.hizmet.includes("foto"));
   const videoVar = s.hizmet.some(id => AYAR.hizmetler.find(x => x.id === id).video);
-  const ses = document.getElementById("ekstra-ses"); ses.disabled = !videoVar; if (!videoVar) ses.checked = false;
+  const sesEl = document.getElementById("ekstra-ses"); sesEl.disabled = !videoVar; if (!videoVar) sesEl.checked = false;
 
   // fiş
   const tip = AYAR.tipler.find(t => t.id === s.tip), m2 = AYAR.m2.find(m => m.id === s.m2);
@@ -355,17 +407,37 @@ function guncelle(){
     $("#big").textContent = "Özel teklif";
     $("#kdv").textContent = "800 m² üstü mülklerde fiyatı keşif sonrası belirliyoruz.";
     $("#totalNum").textContent = "Özel teklif";
-    mesaj += "Hizmetler: " + s.hizmet.map(id => hizmetFiyat(id, s).ad).join(", ");
+    mesaj += "Hizmetler: " + s.hizmet.map(id => AYAR.hizmetler.find(h => h.id === id).ad).join(", ");
   } else {
-    r.satirlar.forEach(([ad, t]) => ul.insertAdjacentHTML("beforeend",
-      `<li class="${t<0?"minus":""}"><span>${ad}</span><span>${t<0?"−":""}${tl(Math.abs(t))}</span></li>`));
+    r.satirlar.forEach(([ad, t]) => ul.insertAdjacentHTML("beforeend", `<li><span>${ad}</span><span>${tl(t)}</span></li>`));
+    if (r.tasarruf > 0) ul.insertAdjacentHTML("beforeend", `<li class="minus"><span>Paket avantajı</span><span>${tl(r.tasarruf)} daha az</span></li>`);
+    else {
+      /* Paketin bir kısmı seçildiyse: kaç lira fazlasıyla pakete geçilir? */
+      const p = AYAR.paketler[0];
+      const secili = s.hizmet.filter(id => p.icerik.includes(id));
+      if (secili.length >= 1 && !s.hizmet.some(id => !p.icerik.includes(id))){
+        const c2 = carpanOf(s);
+        const simdi = secili.reduce((t,id) => t + tekFiyat(id, s, c2).t, 0) + (s.ekstra.includes("ses") ? 2490 : 0);
+        const fark = psik(p.fiyat * c2) - simdi;
+        if (fark <= 6000) ul.insertAdjacentHTML("beforeend", `<li class="minus"><span>${fark > 0 ? tl(fark) + " fazlasıyla" : "Daha ucuza"} fotoğraf + video + drone: Satış Paketi</span><span></span></li>`);
+      }
+    }
     $("#big").innerHTML = `${tl(r.toplam)}<small>+ KDV</small>`;
     $("#kdv").textContent = `KDV dahil ${tl(Math.round(r.toplam * (1 + AYAR.kdv)))}`;
     $("#totalNum").textContent = tl(r.toplam);
-    mesaj += r.satirlar.map(([ad,t]) => `• ${ad}: ${t<0?"−":""}${tl(Math.abs(t))}`).join("\n") + `\n\nToplam: ${tl(r.toplam)} + KDV`;
+    mesaj += r.satirlar.map(([ad,t]) => `• ${ad}: ${tl(t)}`).join("\n") + `\n\nToplam: ${tl(r.toplam)} + KDV`;
   }
   $("#wa").href = `https://wa.me/${AYAR.whatsapp}?text=${encodeURIComponent(mesaj)}`;
 }
+
+/* Paket seçilince hizmetleri işaretle */
+document.querySelectorAll('input[name="paket"]').forEach(i => i.addEventListener("change", () => {
+  const p = AYAR.paketler.find(x => x.id === i.value);
+  document.querySelectorAll('input[name="hizmet"]').forEach(h => h.checked = p.icerik.includes(h.value));
+  document.getElementById("fotoTur-hdr").checked = true;
+  if (p.sesDahil) document.getElementById("ekstra-ses").checked = false;
+}));
+$("#paketYok").addEventListener("click", () => { document.querySelectorAll('input[name="hizmet"]').forEach(h => h.checked = false); guncelle(); });
 document.addEventListener("change", guncelle);
 guncelle();
 
