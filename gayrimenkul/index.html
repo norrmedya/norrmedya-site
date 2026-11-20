@@ -238,13 +238,17 @@
   .cursor.big{width:76px;height:76px;margin:-38px 0 0 -38px;background:radial-gradient(circle,rgba(242,183,91,.28) 0%,rgba(242,183,91,.08) 55%,transparent 72%)}
   @media (hover:none),(prefers-reduced-motion:reduce){.cursor{display:none}.logo-fx{animation:none}}
 
-  /* başlıkta logo ile aynı ışık geçişi */
-  .shine{background:linear-gradient(115deg,#F3F5F4 0%,#F3F5F4 38%,#F2B75B 46%,#FFE2A8 50%,#7FB7E6 55%,#F3F5F4 63%,#F3F5F4 100%) 0 0/300% 100%;
+  /* başlık: imlecin yaklaştığı harfler renklenir */
+  @property --hx{syntax:"<length>";inherits:false;initial-value:-500px}
+  @property --hy{syntax:"<length>";inherits:false;initial-value:-500px}
+  @property --hr{syntax:"<length>";inherits:false;initial-value:0px}
+  .shine{display:block;--hr:0px;
+    background:radial-gradient(var(--hr) circle at var(--hx) var(--hy),#F2B75B 0%,#FFD08A 30%,#9CC6EA 58%,#F3F5F4 100%) #F3F5F4;
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
-    animation:logoShine 7s ease-in-out infinite;animation-delay:1.2s;filter:drop-shadow(0 2px 18px rgba(0,0,0,.35))}
+    filter:drop-shadow(0 2px 18px rgba(0,0,0,.35));transition:--hr .45s ease,--hx .12s linear,--hy .12s linear}
+  .shine.on{--hr:260px}
   .hero h1{text-shadow:none}
-  .hero h1:hover .shine{animation-duration:2.2s}
-  @media (prefers-reduced-motion:reduce){.shine{animation:none;background-position:100% 0}}
+  @media (hover:none){.shine{background:none;-webkit-text-fill-color:currentColor;color:var(--kirec)}}
 </style>
 </head>
 <body>
@@ -709,6 +713,16 @@ if (matchMedia("(hover: hover)").matches && !matchMedia("(prefers-reduced-motion
   }, {passive:true});
   document.addEventListener("pointerleave", () => c.classList.remove("on"));
   (function tick(){ cx += (x - cx) * .2; cy += (y - cy) * .2; c.style.transform = `translate(${cx}px,${cy}px)`; requestAnimationFrame(tick); })();
+}
+/* başlık rengi imleci takip eder */
+if (matchMedia("(hover: hover)").matches){
+  const sh = document.querySelector(".shine"), top = document.querySelector(".top");
+  top.addEventListener("pointermove", e => {
+    const r = sh.getBoundingClientRect();
+    sh.style.setProperty("--hx", (e.clientX - r.left) + "px"); sh.style.setProperty("--hy", (e.clientY - r.top) + "px");
+    sh.classList.add("on");
+  }, {passive:true});
+  top.addEventListener("pointerleave", () => sh.classList.remove("on"));
 }
 </script>
 </body>
