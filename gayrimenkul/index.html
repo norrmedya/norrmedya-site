@@ -237,6 +237,14 @@
   .cursor.on{opacity:1}
   .cursor.big{width:76px;height:76px;margin:-38px 0 0 -38px;background:radial-gradient(circle,rgba(242,183,91,.28) 0%,rgba(242,183,91,.08) 55%,transparent 72%)}
   @media (hover:none),(prefers-reduced-motion:reduce){.cursor{display:none}.logo-fx{animation:none}}
+
+  /* başlıkta logo ile aynı ışık geçişi */
+  .shine{background:linear-gradient(115deg,#F3F5F4 0%,#F3F5F4 38%,#F2B75B 46%,#FFE2A8 50%,#7FB7E6 55%,#F3F5F4 63%,#F3F5F4 100%) 0 0/300% 100%;
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    animation:logoShine 7s ease-in-out infinite;animation-delay:1.2s;filter:drop-shadow(0 2px 18px rgba(0,0,0,.35))}
+  .hero h1{text-shadow:none}
+  .hero h1:hover .shine{animation-duration:2.2s}
+  @media (prefers-reduced-motion:reduce){.shine{animation:none;background-position:100% 0}}
 </style>
 </head>
 <body>
@@ -255,7 +263,7 @@
 </header>
 
 <div class="hero">
-  <h1 class="rise">Mülkünüz daha hızlı satılsın</h1>
+  <h1 class="rise"><span class="shine">Mülkünüz daha hızlı satılsın</span></h1>
   <p class="rise" style="--d:.15s">İstanbul'da daire, villa, ofis ve bina için fotoğraf, tanıtım videosu, drone ve Reels çekimi. İstediğiniz hizmeti seçin, fiyatını hemen görün.</p>
   <p class="credit rise" style="--d:.3s">Kadıköy · Norr Medya drone çekimi</p>
 </div>
